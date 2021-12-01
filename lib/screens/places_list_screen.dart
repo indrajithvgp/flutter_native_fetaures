@@ -18,24 +18,28 @@ class PlacesListScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: Consumer<GreatPlaces>(
-            child: Center(
-              child: Text("Got No Places Yet. Please Add"),
-            ),
-            builder: (ctx, greatPlaces, ch) => ListView.builder(itemBuilder: (ctx, i) {
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: FileImage(greatPlaces.items[i].image),
-                    ),
-                    title: Text(greatPlaces.items[i].title),
-                    // subtitle: Text(greatPlaces.items[i].location.address),
-                    // onTap: () {},
-                  );
-                }, itemCount: greatPlaces.items.length)));
-    ;
+        body: FutureBuilder(
+            future: Provider.of<GreatPlaces>(context, listen: false)
+                .fetchAndSetPlaces(),
+            builder: (ctx, snapshot) =>
+                snapshot.connectionState == ConnectionState.waiting
+                    ? Center(child: CircularProgressIndicator())
+                    : Consumer<GreatPlaces>(
+                        child: Center(
+                          child: Text("Got No Places Yet. Please Add"),
+                        ),
+                        builder: (ctx, greatPlaces, ch) => ListView.builder(
+                            itemBuilder: (ctx, i) {
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage:
+                                      FileImage(greatPlaces.items[i].image),
+                                ),
+                                title: Text(greatPlaces.items[i].title),
+                                // subtitle: Text(greatPlaces.items[i].location.address),
+                                // onTap: () {},
+                              );
+                            },
+                            itemCount: greatPlaces.items.length))));
   }
 }
-
-// Center(
-//         child: CircularProgressIndicator(),
-      
